@@ -1,10 +1,15 @@
+import { UUID } from 'mongodb';
 import mongoose from 'mongoose';
-import passportLocalMongoose from 'passport-local-mongoose';
-
 
 const Schema = mongoose.Schema;
 
-const UserSchema = new Schema({
+export const UserSchema = new Schema({
+
+    _id: {
+        type:UUID,
+        required: true
+    },
+
 
     username: {
         type: String,
@@ -23,9 +28,5 @@ const UserSchema = new Schema({
     }
 })
 
-UserSchema.plugin(passportLocalMongoose)
 
-
-const UserModel = mongoose.model('user',UserSchema)
-const user = new UserModel;
-module.exports = UserModel,user;
+export const UserModel = mongoose.model('user',UserSchema)

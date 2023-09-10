@@ -13,4 +13,7 @@ flightRouter.post('/getChosenAirportData', FlightController.getChosenAirportData
 
 flightRouter.get('/resultForTesting', FlightController.resultForTesting)
 
+flightRouter.post('/getChosenAirportsFlights',FlightController.getChosenAirportsFlights)
+
+
 export default flightRouter;

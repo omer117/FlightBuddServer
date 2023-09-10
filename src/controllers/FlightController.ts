@@ -121,13 +121,17 @@ const FlightController: any = {
 
                     let reallyArr = [];
                     for (let i = 0; i < finalArr.length; i++) {
-                        if ((isNaN(finalArr[i].score) === false) && finalArr[i].score !== 0 && finalArr[i].score > 0) {
-                            isNaN(i)
+                        if ((isNaN(finalArr[i].score) === false)) {
                             reallyArr.push({ arr_code: finalArr[i].arr_code, score: finalArr[i].score })
                         }
                     }
                     reallyArr.sort((a, b) => a.score - b.score);
-                    res.send(reallyArr)
+                    let fa = reallyArr.reverse()
+                    let temp3 = []
+                    for(let i = 0 ; i < 5; i++) {
+                        temp3.push(fa[i])
+                    }    
+                    res.send(temp3)
                 }).catch((err) => console.log(err))
         }
     },
@@ -137,7 +141,7 @@ const FlightController: any = {
         let airportData = await mongoUser.db('countries').collection('everyAirportDB').findOne({ Orig: askedAirportCode })
         res.json(airportData)
     },
-    flightResultsForAlgo:async (req: Request, res: Response) => {
+    flightResultsForAlgo: async (req: Request, res: Response) => {
         let from = req.body.from;
         let to = req.body.to;
         let date = req.body.date;
@@ -162,7 +166,7 @@ const FlightController: any = {
 
 
         console.log('got here');
-        let arr:any = []
+        let arr: any = []
         await axios.request(options).then((response) => {
             console.log((response.data));
             if (response.data.status !== 404) {
@@ -175,11 +179,65 @@ const FlightController: any = {
         })
         res.send(arr)
     },
-    
+
     resultForTesting: async (req: Request, res: Response) => {
         const result = mongoUser.db('countries').collection('testing_results')
         let resultData = await result.find().toArray()
         res.send(resultData);
+    },
+    getChosenAirportsFlights: async (req: Request, res: Response) => {
+        const { airportTarget, airportFrom } = req.body;
+
+        let askedAirportCode1 = req.body.airportFrom
+        let askedAirportCode2 = req.body.airportTarget
+        let airportData1 = await mongoUser.db('countries').collection('everyAirportDB').findOne({ Orig: askedAirportCode1 })
+        let airportData2 = await mongoUser.db('countries').collection('everyAirportDB').findOne({ Orig: askedAirportCode2 })
+
+        const FlightAxiosOptions = {
+            method: 'GET',
+            url: 'https://airlabs.co/api/v9/schedules'
+            , params: {
+                dep_iata: `${airportFrom}`,
+                // api_key: process.env.FIRST_API_KEY,
+                api_key: process.env.SECOND_API_KEY,
+            },
+        };
+
+        let arr: object[] = [];
+        axios.request(FlightAxiosOptions).then((response) => {
+            const lastLayer = response.data.response
+            for (let i = 0; i < lastLayer.length; i++) {
+                if (lastLayer[i].arr_iata === airportTarget) {
+                    const hours = Math.floor(lastLayer[i].duration / 60)
+                    const minutes = lastLayer[i].duration % 60
+                    const depDate = lastLayer[i].dep_time.slice(0, 10)
+                    const arrDate = lastLayer[i].arr_time.slice(0, 10)
+                    const deptime = lastLayer[i].dep_time.slice(11, 16)
+                    const arrtime = lastLayer[i].arr_time.slice(11, 16)
+
+                    arr.push({
+
+                        airline_code: lastLayer[i].airline_icao,
+                        flight_number: lastLayer[i].flight_icao,
+                        dep_airport_name: airportData1!.Name,
+                        dep_country: airportData1!['Country Name'],
+                        dep_code: lastLayer[i].dep_iata,
+                        dep_time: depDate,
+                        dep_hour: deptime,
+                        arr_airport_name: airportData2!.Name,
+                        arr_country: airportData2!['Country Name'],
+                        arr_code: lastLayer[i].arr_iata,
+                        arr_time: arrDate,
+                        arr_hour: arrtime,
+                        duration_hours: `${hours}h:${minutes}m`,
+                    })
+                }
+            }
+            res.status(200).send(arr)
+        }).catch((err) => {
+            res.status(500).send(err)
+        })
+
     }
 }
 
