@@ -6,10 +6,10 @@ import { MongoClient } from 'mongodb'
 import flightRouter from './routes/FlightRoutes';
 import mongoose from 'mongoose'
 import cors from 'cors'
-import AuthRouter from './routes/AuthRoutes';
 import bodyParser from 'body-parser';
 import session from 'express-session';
 import {expressjwt} from 'express-jwt'
+import AuthRouter from './routes/authRoutes';
 export const uri: string = process.env.MONGO_URI!;
 export const secretkey: string = process.env.SECRET_KEY!;
 export const mongoUser = new MongoClient(uri);
