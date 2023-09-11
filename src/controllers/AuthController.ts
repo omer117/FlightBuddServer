@@ -14,14 +14,15 @@ export const AuthController: any = {
         ///
         const { username, password } = req.body;
         const user: any = await UserModel.findOne({ username: username })
-        console.log(user);
         if (!user) {
             return res.status(401).json({ message: 'User not found' })
         }
         bcrypt.compare(user.password, password, (error, result) => {
             if (result !== undefined) {
-                const token = jwt.sign({ userId: user.id, username: user.username }, secretkey)
-                return res.status(200).json({ token })
+                const token =
+                    jwt.sign({ userId: user.id, username: user.username }
+                        , secretkey,{expiresIn:'1h'})
+                return res.status(200).json({ token:token ,user_id:user.id });
             } else {
                 return res.status(401).json({ message: 'Invalid username or password' })
             }
@@ -47,8 +48,8 @@ export const AuthController: any = {
     },
 
     addUserFlight: async (req: Request, res: Response) => {
-        const { flights } = req.body
-        await mongoUser.db('countries').collection('userFlights').insertMany(flights).then(() => {
+        const { flight } = req.body
+        await mongoUser.db('countries').collection('userFlights').insertOne(flight).then(() => {
             res.status(200).send({ message: 'success' })
         }).catch((err) => {
             res.status(500).send({ message: err })
@@ -57,7 +58,7 @@ export const AuthController: any = {
     },
     findUserFlightById: async (req: Request, res: Response) => {
         const { user_id } = req.body
-        await mongoUser.db('countries').collection('userFlights').find({user_id:user_id}).toArray().then((response) => {
+        await mongoUser.db('countries').collection('userFlights').find({ user_id: user_id }).toArray().then((response) => {
             res.status(200).send(response)
         }).catch((err) => {
             res.status(500).send({ message: err })
