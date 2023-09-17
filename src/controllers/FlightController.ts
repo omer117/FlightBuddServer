@@ -14,7 +14,7 @@ const FlightController: any = {
         console.log('i got here bi ');
         let airport1 = req.body.firstAirport;
         let airport2 = req.body.secondAirport;
-
+        console.log(airport1,airport2);
         let firstAirportArr: any = []
         let secondAirportArr: any = []
         const firstFlightAxiosOptions = {
@@ -23,7 +23,8 @@ const FlightController: any = {
             , params: {
                 dep_iata: `${airport1}`,
                 // api_key: process.env.FIRST_API_KEY,
-                api_key: process.env.SECOND_API_KEY,
+                // api_key: process.env.SECOND_API_KEY,
+                api_key: process.env.THIRD_API_KEY,
             },
         };
 
@@ -34,7 +35,8 @@ const FlightController: any = {
             , params: {
                 dep_iata: `${airport2}`,
                 // api_key: process.env.FIRST_API_KEY,
-                api_key: process.env.SECOND_API_KEY,
+                // api_key: process.env.SECOND_API_KEY,
+                api_key: process.env.THIRD_API_KEY,
             },
         };
 
@@ -45,6 +47,8 @@ const FlightController: any = {
             await axios.request(firstFlightAxiosOptions)
                 .then(async (response) => {
                     const lastLayer = response.data.response
+                    const lastLayerd = response.data
+                    console.log(lastLayerd);
                     if (!(lastLayer == undefined)) {
                         for (let i = 0; i < lastLayer.length; i++) {
                             const flightData = [lastLayer[i].dep_iata, lastLayer[i].arr_iata, lastLayer[i].duration]
@@ -200,7 +204,8 @@ const FlightController: any = {
             , params: {
                 dep_iata: `${airportFrom}`,
                 // api_key: process.env.FIRST_API_KEY,
-                api_key: process.env.SECOND_API_KEY,
+                // api_key: process.env.SECOND_API_KEY,
+                api_key: process.env.THIRD_API_KEY,
             },
         };
 
