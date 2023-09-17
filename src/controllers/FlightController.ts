@@ -11,6 +11,7 @@ const FlightController: any = {
         })
     },
     airportAlgorithem: async (req: Request, res: Response) => {
+        console.log('i got here bi ');
         let airport1 = req.body.firstAirport;
         let airport2 = req.body.secondAirport;
 
