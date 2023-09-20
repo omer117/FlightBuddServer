@@ -24,7 +24,6 @@ export const UserSchema = new Schema({
     password: {
         type: String,
         required: true,
-        unique: true
     }
 })
 

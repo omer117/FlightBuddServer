@@ -1,4 +1,4 @@
-import { Response, Request } from "express"
+import { Response, Request, response } from "express"
 import bcrypt from 'bcrypt'
 import { v4 as uuidv4 } from 'uuid';
 import jwt from 'jsonwebtoken'
@@ -21,8 +21,8 @@ export const AuthController: any = {
             if (result !== undefined) {
                 const token =
                     jwt.sign({ userId: user.id, username: user.username }
-                        , secretkey,{expiresIn:'1h'})
-                return res.status(200).json({ token:token ,user_id:user.id });
+                        , secretkey, { expiresIn: '1h' })
+                return res.status(200).json({ token: token, user_id: user.id });
             } else {
                 return res.status(401).json({ message: 'Invalid username or password' })
             }
@@ -32,6 +32,7 @@ export const AuthController: any = {
     Register: async (req: Request, res: Response) => {
         const { username, password, email } = req.body;
         //impl here validation 
+        console.log(req.body);
         const hashedPassword = bcrypt.hashSync(password, 13)
         const newUser = new UserModel({
             id: uuidv4(),
@@ -40,11 +41,26 @@ export const AuthController: any = {
             password: hashedPassword,
         })
 
-        await newUser.save().then((response) => {
-            res.status(200).send({ message: 'success' })
+        await newUser.save().then(async () => {
+            const user: any = await UserModel.findOne({ username: username })
+            if (!user) {
+                return res.status(401).json({ message: 'User not found' })
+            }
+            bcrypt.compare(user.password, password, (error, result) => {
+                if (result !== undefined) {
+                    const token =
+                        jwt.sign({ userId: user.id, username: user.username }
+                            , secretkey, { expiresIn: '1h' })
+                    return res.status(200).json({ token: token, user_id: user.id });
+                } else {
+                    return res.status(401).json({ message: 'Invalid username or password' })
+                }
+            })
         }).catch((err) => {
             res.status(500).send({ message: err })
         })
+
+
     },
 
     addUserFlight: async (req: Request, res: Response) => {
