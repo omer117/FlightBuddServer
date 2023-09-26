@@ -31,6 +31,9 @@ app.use(
 
 app.use('/AuthAPI', AuthRouter)
 app.use('/flightsAPI', flightRouter);
+app.use('/',(req,res)=>{
+  res.status(200).send("Welcome")
+})
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
