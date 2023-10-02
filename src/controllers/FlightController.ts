@@ -239,6 +239,7 @@ const FlightController: any = {
                     })
                 }
             }
+            console.log(arr);
             res.status(200).send(arr)
         }).catch((err) => {
             res.status(500).send(err)
