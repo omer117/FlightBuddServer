@@ -14,7 +14,7 @@ const FlightController: any = {
         console.log('i got here bi ');
         let airport1 = req.body.firstAirport;
         let airport2 = req.body.secondAirport;
-        console.log(airport1,airport2);
+        console.log(airport1, airport2);
         let firstAirportArr: any = []
         let secondAirportArr: any = []
         const firstFlightAxiosOptions = {
@@ -133,9 +133,9 @@ const FlightController: any = {
                     reallyArr.sort((a, b) => a.score - b.score);
                     let fa = reallyArr.reverse()
                     let temp3 = []
-                    for(let i = 0 ; i < 5; i++) {
+                    for (let i = 0; i < 5; i++) {
                         temp3.push(fa[i])
-                    }    
+                    }
                     res.send(temp3)
                 }).catch((err) => console.log(err))
         }
@@ -170,10 +170,8 @@ const FlightController: any = {
 
 
 
-        console.log('got here');
         let arr: any = []
         await axios.request(options).then((response) => {
-            console.log((response.data));
             if (response.data.status !== 404) {
                 arr = [200, response.data.results]
             } else if (response.data.status === 404) {
@@ -239,12 +237,26 @@ const FlightController: any = {
                     })
                 }
             }
-            console.log(arr);
             res.status(200).send(arr)
         }).catch((err) => {
             res.status(500).send(err)
         })
 
+    }
+    ,
+    addFlight: async (req: Request, res: Response) => {
+        let data = req.body;
+        await mongoUser.db('countries').collection('userFlights').insertOne( data );
+        res.send(data);
+    }
+    ,
+    findFlightById: async (req: Request, res: Response) => {
+        const { user_id } = req.body
+        await mongoUser.db('countries').collection('userFlights').find({ user_id: user_id }).toArray().then((response) => {
+            res.status(200).send(response)
+        }).catch((err) => {
+            res.status(500).send({ message: err })
+        })
     }
 }
 

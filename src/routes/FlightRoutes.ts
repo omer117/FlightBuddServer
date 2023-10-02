@@ -15,5 +15,9 @@ flightRouter.get('/resultForTesting', FlightController.resultForTesting)
 
 flightRouter.post('/getChosenAirportsFlights',FlightController.getChosenAirportsFlights)
 
+flightRouter.post('/addFlights',FlightController.addFlight)
+
+flightRouter.post('/findFlightById',FlightController.findFlightById)
+
 
 export default flightRouter;

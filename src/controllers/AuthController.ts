@@ -63,15 +63,8 @@ export const AuthController: any = {
 
     },
 
-    addUserFlight: async (req: Request, res: Response) => {
-        const { flight } = req.body
-        await mongoUser.db('countries').collection('userFlights').insertOne(flight).then(() => {
-            res.status(200).send({ message: 'success' })
-        }).catch((err) => {
-            res.status(500).send({ message: err })
-        })
 
-    },
+
     findUserFlightById: async (req: Request, res: Response) => {
         const { user_id } = req.body
         await mongoUser.db('countries').collection('userFlights').find({ user_id: user_id }).toArray().then((response) => {
