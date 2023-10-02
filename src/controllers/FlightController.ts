@@ -245,7 +245,8 @@ const FlightController: any = {
     }
     ,
     addFlight: async (req: Request, res: Response) => {
-        let data = req.body.flights;
+        let data = req.body.flight;
+        console.log(data);
         await mongoUser.db('countries').collection('userFlights').insertOne( data );
         res.send(data);
     }
